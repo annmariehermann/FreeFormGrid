@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>freeform</title>
+
+    <script type="text/javascript" src="/apps/2.0rc2/sdk.js"></script>
+
+    <script type="text/javascript">
+        Rally.onReady(function () {
+                Rally.onReady(function(){
+    Ext.define('CustomApp', {
+        extend: 'Rally.app.App',
+        componentCls: 'app',
+        
+        launch: function() {
+            Ext. create('Rally.data.WsapiDataStore',{
+                model: 'UserStory',
+                autoLoad: true,
+                listeners: {
+                    load: this._onDataLoaded,
+                    scope: this
+                }
+            });
+    },
+    
+        _onDataLoaded: function(store,data) {
+            var records =[];
+            Ext.Array.each(data, function (record) {
+                records.push({
+                    ScheduleState: record.get('ScheduleState'),
+                    Name: record.get ('Name'),
+                    Tasks: record.get('Tasks').length,
+                    Defects: record.get('Defects').length
+                    });
+            });
+            
+            this.add({
+                xtype:'rallygrid',
+                store: Ext.create ('Rally.data.custom.Store', {
+                    data: records,
+                    pageSize:5
+                }),
+                columnCfgs: [
+                    {
+                        text: 'Name', dataIndex: 'Name', flex: 1
+                    },
+                    {
+                        text: 'Schedule State', dataIndex: 'ScheduleState'
+                    },
+                    {
+                        text: 'Tasks', dataIndex: 'Tasks'
+                    },
+                    {
+                        text: 'Defects', dataIndex: 'Defects'
+                    }
+                    ]
+            })
+        }
+})
+});
+
+
+            Rally.launchApp('CustomApp', {
+                name:"freeform",
+	            parentRepos:""
+            });
+
+        });
+    </script>
+
+
+    <style type="text/css">
+        .app {
+     
+     
+         background-color:#d0e4fe;
+
+
+}
+
+    </style>
+</head>
+<body></body>
+</html>
